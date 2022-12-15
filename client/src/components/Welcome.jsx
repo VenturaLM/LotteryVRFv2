@@ -35,21 +35,26 @@ const Welcome = () => {
 
     return (
         <div className="mt-16 mb-32 flex flex-col gap-y-4 xs:px-4 md:px-16">
-            <div className="flex mf:flex-row flex-col items-start justify-between md:p-20 py-12 px-4 space-y-10">
-                <div className="flex flex-1 justify-start flex-col mf:mr-10">
-                    <h1 className="text-3xl sm_text-5xl text-sky-400 text-gradient py-1">
-                        Lotería<br />comunitaria
+            {/* <div className="flex mf:flex-row flex-col items-start justify-between md:p-20 py-12 px-4 space-y-10"> */}
+            <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6">
+                <div className="flex flex-1 justify-start items-center flex-col mf:mr-10">
+                    <h1 className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 text-white font-light">
+                        Lorem<br />ipsum
                     </h1>
-                    <p className="text-left mt-5 text-white font-light md:w-7/12 w-11/12 text-base">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    <p className="text-left mt-5 text-white font-inter text-xs tracking-widest text-slateus-200 font-light md:w-7/12 w-11/12">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                     </p>
                 </div>
+
                 <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
                     <form>
+                        <div className="mt-[5px] bg-gradient-to-r bg-clip-text text-center font-roboto text-3xl font-light text-transparent from-orange-400 to-yellow-300">
+                            {amount}
+                        </div>
                         <input
-                            type="number"
+                            type="range"
                             placeholder="Cantidad"
-                            className="bg-gray-400 border w-64 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            className="w-full h-1 rounded-lg appearance-none cursor-pointer bg-gradient-to-l from-cyan-300 to-indigo-500"
                             min={1}
                             max={10}
                             value={amount}
