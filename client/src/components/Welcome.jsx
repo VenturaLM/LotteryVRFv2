@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ethers } from "ethers";
 import { Web3Button, useContract, useContractWrite, useAddress } from "@thirdweb-dev/react";
 
-import { contractAddress, contractCOST } from "../utils/costants";
+import { contractOwner, contractAddress, contractCOST } from "../utils/costants";
 
 const Welcome = () => {
     const [amount, setAmount] = useState("");
@@ -12,14 +12,16 @@ const Welcome = () => {
 
     const call = async () => {
         try {
-            const parsedAmount = ethers.utils.parseEther((amount * contractCOST).toString());
+            const parsedAmount = currentAddress != contractOwner
+                ? ethers.utils.parseEther((amount * contractCOST).toString())
+                : ethers.utils.parseEther("0");
 
             await ethereum.request({
                 method: "eth_sendTransaction",
                 params: [{
                     from: currentAddress,
                     to: contractAddress,
-                    gas: "0x5208", // FIXME: 21_000 Gwei de base. Ver si esto es correcto.
+                    gas: "0x5208", // Estimar gas.
                     value: parsedAmount._hex
                 }]
             });
