@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { Web3Button, useContract, useContractWrite, useAddress } from "@thirdweb-dev/react";
 
@@ -9,6 +9,24 @@ const Welcome = () => {
     const { contract } = useContract(contractAddress);
     const { mutateAsync: mint, isLoading } = useContractWrite(contract, "mint")
     const currentAddress = useAddress();
+    const [isPausedLoading, setIsPausedLoading] = useState(false);
+    const [isPaused, setIsPaused] = useState("");
+
+    const getIsPaused = async () => {
+        const paused = await contract.call("_isPaused");
+        return paused;
+    }
+
+    const fetchIsPaused = async () => {
+        setIsPausedLoading(true);
+        const paused = await getIsPaused();
+        setIsPaused(paused);
+        setIsPausedLoading(false);
+    }
+
+    useEffect(() => {
+        if (contract) fetchIsPaused();
+    }, [contractAddress, contract]);
 
     const call = async () => {
         try {
@@ -68,6 +86,7 @@ const Welcome = () => {
                         action={call}
                         accentColor="#94a3b8a1"
                         colorMode="dark"
+                        isDisabled={isPaused}
                     >
                         Mint tickets
                     </Web3Button>
