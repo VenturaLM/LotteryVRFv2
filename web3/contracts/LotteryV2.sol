@@ -410,7 +410,7 @@ contract Lottery is Ownable {
         require(success, "[Lottery]: Call a Winner fallido.");
         emit SuccessfulPayment(success);
 
-        // Save the rest of the balance in a Liquidity address.
+        // FIXME: Save the rest of the balance in a Liquidity address.
         (success, ) = _liquidity.call{value: address(this).balance}("");
         require(success, "[Lottery]: Call a Liquidity fallido.");
         emit SuccessfulPayment(success);
