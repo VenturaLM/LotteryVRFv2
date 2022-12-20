@@ -29,7 +29,7 @@ const LiveData = () => {
             <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6">
                 <div className="border-slate-600 p-6 flex flex-1 justify-start items-center flex-col mf:mr-10 blue-glassmorphism">
                     <h1 className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
-                        Tickets comprados
+                        Boletos en circulación
                     </h1>
                     <div className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
                         {isSupplyLoading && (
@@ -43,7 +43,7 @@ const LiveData = () => {
 
                 <div className="border-slate-600 p-6 flex flex-1 justify-start items-center flex-col mf:mr-10 blue-glassmorphism">
                     <h1 className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
-                        Bote actual
+                        Bote actual (MATIC)
                     </h1>
                     <div className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
                         {isSupplyLoading && (
@@ -51,7 +51,7 @@ const LiveData = () => {
                         )}
                         {!isSupplyLoading && (
                             totalSupply * contractCOST
-                        )} MATIC
+                        )}
                     </div>
                 </div>
             </div>

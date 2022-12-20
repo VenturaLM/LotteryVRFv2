@@ -2,3 +2,4 @@
 export { default as Navbar } from "./Navbar";
 export { default as Welcome } from "./Welcome";
 export { default as LiveData } from "./LiveData";
+export { default as History } from "./History";

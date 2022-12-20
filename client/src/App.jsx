@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from "react-router-dom";
 
-import { Navbar, Welcome, LiveData } from "./components";
+import { Navbar, Welcome, LiveData, History } from "./components";
 
 const App = () => {
     return (
@@ -9,6 +9,7 @@ const App = () => {
             <Navbar />
             <Welcome />
             <LiveData />
+            <History />
         </div>
     )
 }
