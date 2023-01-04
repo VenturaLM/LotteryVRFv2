@@ -16,7 +16,8 @@ contract VRFv2Consumer is VRFConsumerBaseV2, ConfirmedOwner {
         bool exists; // whether a requestId exists
         uint256[] randomWords;
     }
-    mapping(uint256 => RequestStatus) public s_requests; /* requestId --> requestStatus */
+    mapping(uint256 => RequestStatus)
+        public s_requests; /* requestId --> requestStatus */
     VRFCoordinatorV2Interface COORDINATOR;
 
     // Your subscription ID.
@@ -46,7 +47,9 @@ contract VRFv2Consumer is VRFConsumerBaseV2, ConfirmedOwner {
     // Cannot exceed VRFCoordinatorV2.MAX_NUM_WORDS.
     uint32 numWords = 2;
 
-    constructor(uint64 subscriptionId)
+    constructor(
+        uint64 subscriptionId
+    )
         VRFConsumerBaseV2(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed)
         ConfirmedOwner(msg.sender)
     {
@@ -99,11 +102,9 @@ contract VRFv2Consumer is VRFConsumerBaseV2, ConfirmedOwner {
         emit RequestFulfilled(_requestId, _randomWords);
     }
 
-    function getRequestStatus(uint256 _requestId)
-        external
-        view
-        returns (bool fulfilled, uint256[] memory randomWords)
-    {
+    function getRequestStatus(
+        uint256 _requestId
+    ) external view returns (bool fulfilled, uint256[] memory randomWords) {
         require(s_requests[_requestId].exists, "request not found");
         RequestStatus memory request = s_requests[_requestId];
         return (request.fulfilled, request.randomWords);
@@ -233,11 +234,10 @@ contract Lottery is Ownable {
      * @param lotteryId uint256 ID of the lottery.
      * @param owner address Address of the tickets.
      */
-    function ticketAmountByLotteryIdAndAddress(uint256 lotteryId, address owner)
-        public
-        view
-        returns (uint256)
-    {
+    function ticketAmountByLotteryIdAndAddress(
+        uint256 lotteryId,
+        address owner
+    ) public view returns (uint256) {
         return _ticketByOwnerHistory[lotteryId][owner].length;
     }
 
@@ -258,11 +258,10 @@ contract Lottery is Ownable {
      * @param lotteryId uint256 ID of the lottery.
      * @param owner address Address of the tickets.
      */
-    function ticketByLotteryIdAndAddress(uint256 lotteryId, address owner)
-        public
-        view
-        returns (uint256[] memory)
-    {
+    function ticketByLotteryIdAndAddress(
+        uint256 lotteryId,
+        address owner
+    ) public view returns (uint256[] memory) {
         return _ticketByOwnerHistory[lotteryId][owner];
     }
 
@@ -321,12 +320,9 @@ contract Lottery is Ownable {
      *
      * Emits a {SuccessfulContractConnection} event.
      */
-    function connectToVRFv2ConsumerContract(address vrfAddress)
-        public
-        onlyOwner
-        onlyIfLotteryNotEnded
-        onlyIfIsPaused
-    {
+    function connectToVRFv2ConsumerContract(
+        address vrfAddress
+    ) public onlyOwner onlyIfLotteryNotEnded onlyIfIsPaused {
         _vrf = VRFv2Consumer(vrfAddress);
         _isVRFv2Connected = true;
         emit SuccessfulContractConnection(address(_vrf));
@@ -366,12 +362,9 @@ contract Lottery is Ownable {
      *
      * Emits {SuccessfulPayment} events.
      */
-    function computeWinner(uint256 salt)
-        public
-        onlyOwner
-        onlyIfLotteryNotEnded
-        onlyIfIsPaused
-    {
+    function computeWinner(
+        uint256 salt
+    ) public onlyOwner onlyIfLotteryNotEnded onlyIfIsPaused {
         // Retrieve in-game tokens.
         uint256 allTokens = totalSupply();
         require(allTokens > 0, "[Lottery]: No existen jugadores.");
