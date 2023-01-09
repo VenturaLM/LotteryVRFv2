@@ -5,10 +5,3 @@ In order to generate a strong random `salt` in `computeWinner(string memory salt
     secrets.token_hex(64)
 
 The [`secrets.token_hex(n)`](https://docs.python.org/3/library/secrets.html#secrets.token_hex) method return a random text string, in hexadecimal. The string has *nbytes* random bytes, each byte converted to two hex digits. If *nbytes* is `None` or not supplied, a reasonable default is used.
-
-Example:
-
-```
-    >>> token_hex(16)  
-    'f9bf78b9a18ce6d46a0cd2b0b86df9da'
-```
