@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useContract } from "@thirdweb-dev/react";
+import { useContract, useContractRead } from "@thirdweb-dev/react";
 
 import { contractAddress, contractCOST } from "../utils/costants";
 
 const LiveData = () => {
     const { contract } = useContract(contractAddress);
+
+    // Supply.
     const [isSupplyLoading, setIsSupplyLoading] = useState(false);
     const [totalSupply, setTotalSupply] = useState("");
+
+    // Balance.
+    const [isBalanceLoading, setIsBalanceLoading] = useState(false);
+    const [balance, setBalance] = useState("");
 
     const getTotalSupply = async () => {
         const supply = await contract.call("totalSupply");
         return supply.toString();
+    }
+
+    const getBalance = async () => {
+        // FIXME: This is not a good approach to estimate the real jackpot. Just need to get the
+        // contract balance.
+        const balance = totalSupply * contractCOST;// await web3.eth.getBalance(contractAddress);
+        return balance;
     }
 
     const fetchTotalSupply = async () => {
@@ -20,8 +33,18 @@ const LiveData = () => {
         setIsSupplyLoading(false);
     }
 
+    const fetchBalance = async () => {
+        setIsBalanceLoading(true);
+        const balance = await getBalance();
+        setBalance(balance);
+        setIsBalanceLoading(false);
+    }
+
     useEffect(() => {
-        if (contract) fetchTotalSupply();
+        if (contract) {
+            fetchTotalSupply();
+            fetchBalance();
+        }
     }, [contractAddress, contract]);
 
     return (
@@ -50,7 +73,7 @@ const LiveData = () => {
                             <h1>Cargando...</h1>
                         )}
                         {!isSupplyLoading && (
-                            totalSupply * contractCOST
+                            balance
                         )}
                     </div>
                 </div>
