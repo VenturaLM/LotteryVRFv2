@@ -8,6 +8,9 @@ const History = () => {
                     <h1 className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
                         Historial de loterías
                     </h1>
+                    <h1 className="sm_text-3xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-2xl text-transparent from-cyan-300 to-indigo-500 font-light">
+                        Disponible próximamente
+                    </h1>
                 </div>
             </div>
         </div>

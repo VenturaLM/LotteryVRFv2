@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useContract, useContractRead } from "@thirdweb-dev/react";
+import { useContract } from "@thirdweb-dev/react";
+import { ethers } from "ethers";
+import Web3 from "web3";
 
-import { contractAddress, contractCOST } from "../utils/costants";
+import { contractAddress } from "../utils/costants";
 
 const LiveData = () => {
+    const web3 = new Web3(window.ethereum);
     const { contract } = useContract(contractAddress);
 
     // Supply.
@@ -20,9 +23,8 @@ const LiveData = () => {
     }
 
     const getBalance = async () => {
-        // FIXME: This is not a good approach to estimate the real jackpot. Just need to get the
-        // contract balance.
-        const balance = totalSupply * contractCOST;// await web3.eth.getBalance(contractAddress);
+        const rawBalance = (await web3.eth.getBalance(contractAddress)).toString();
+        const balance = web3.utils.fromWei(rawBalance, "ether");
         return balance;
     }
 
@@ -69,10 +71,10 @@ const LiveData = () => {
                         Bote actual (MATIC)
                     </h1>
                     <div className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
-                        {isSupplyLoading && (
+                        {isBalanceLoading && (
                             <h1>Cargando...</h1>
                         )}
-                        {!isSupplyLoading && (
+                        {!isBalanceLoading && (
                             balance
                         )}
                     </div>

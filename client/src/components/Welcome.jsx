@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { Web3Button, useContract, useContractWrite, useAddress } from "@thirdweb-dev/react";
+import Web3 from "web3";
+import { Web3Button, useContract, useAddress } from "@thirdweb-dev/react";
 
 import { contractOwner, contractAddress, contractCOST } from "../utils/costants";
+import contractABI from "../../../web3/artifacts/contracts/Lottery.sol/Lottery.json";
+
+
 
 const Welcome = () => {
+    const web3 = new Web3(window.ethereum);
+    const Lottery = new web3.eth.Contract(contractABI.abi, contractAddress);
+
     const [amount, setAmount] = useState("");
     const { contract } = useContract(contractAddress);
-    const { mutateAsync: mint, isLoading } = useContractWrite(contract, "mint")
     const currentAddress = useAddress();
     const [isPausedLoading, setIsPausedLoading] = useState(false);
     const [isPaused, setIsPaused] = useState("");
@@ -34,18 +40,8 @@ const Welcome = () => {
                 ? ethers.utils.parseEther((amount * contractCOST).toString())
                 : ethers.utils.parseEther("0");
 
-            await ethereum.request({
-                method: "eth_sendTransaction",
-                params: [{
-                    from: currentAddress,
-                    to: contractAddress,
-                    gas: "0x5208", // Estimar gas.
-                    value: parsedAmount._hex
-                }]
-            });
-
-            const data = await mint([amount]);
-            console.info("Contract call successs.", data);
+            Lottery.methods.mint(amount).send({ from: currentAddress, value: parsedAmount });
+            console.info("Contract call successs.");
         } catch (err) {
             console.error("Contract call failure.", err);
         }
@@ -57,10 +53,10 @@ const Welcome = () => {
             <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6">
                 <div className="flex flex-1 justify-start items-center flex-col mf:mr-10">
                     <h1 className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
-                        Lorem<br />ipsum
+                        Bienvenido a la <br />lotería
                     </h1>
                     <p className="text-left mt-5 text-white font-inter text-xs tracking-widest text-slateus-200 font-light md:w-7/12 w-11/12">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        En esta lotería podrás competir con miembros de otras comunidades por el bote en juego.
                     </p>
                 </div>
 
@@ -92,7 +88,7 @@ const Welcome = () => {
                     </Web3Button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
