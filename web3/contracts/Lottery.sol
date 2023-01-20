@@ -10,7 +10,8 @@ import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
  * @dev Implementation of a simple lottery contract using Chainlink's VRFv2.
  *
  * NOTES: This contract is supposed to be managed programatically, without the Chainlink's VRFv2
- * Subscription Manager Web [2].
+ * Subscription Manager Web [2]. `keyHash`, `LINK_TOKEN_CONTRACT` and `VRFConsumerBaseV2` addresses
+ * must be setted properly. Currently setted to Polygon's Mumbai Testnet [4].
  *
  *  References:
  *  - Generate a pseudo-random number:
@@ -81,11 +82,13 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
     // Lottery state variables.
     // -----------------------
     // Cost of each token. Note that 1 ether = 1000000000 gwei = 1000000000000000000 wei.
-    uint256 private constant COST = (1 ether / 100); // FIXME
+    // FIXME: Set a proper COST.
+    uint256 private constant COST = (1 ether / 100);
     error InsufficientAmount(uint256 payedAmount, uint256 toPay);
 
     // Maximum supply of the collection.
-    uint256 private constant MAX_SUPPLY = 5; // FIXME
+    // FIXME: Set a proper MAX_SUPPLY.
+    uint256 private constant MAX_SUPPLY = 5;
     error MaxSupplyExceeded();
 
     // Stores all the purchased tickets.
@@ -115,7 +118,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
     error OnlyCallableIfPaused();
     error MintPaused();
 
-    // FIXME: Fill with a real address and create a setter.
+    // FIXME: Set a proper `_liquidity`, if applicable.
     address private _liquidity = 0xfaeAD884FDaDA5B42E8fdd61EdF6286E7FC61b0A;
 
     // Array to store (in order) the players.
@@ -472,6 +475,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
         );
 
         // Send the prize to the winner, e.g., 90% of the total amount.
+        // FIXME: Check this percentages in production.
         (bool success, ) = winnerAddress.call{
             value: (address(this).balance * 90) / 100
         }("");
@@ -479,6 +483,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
         emit SuccessfulPayment(success);
 
         // Save the rest of the balance in a Liquidity address.
+        // FIXME: Only use this if `_liquidity` variable is declared.
         (success, ) = _liquidity.call{value: address(this).balance}("");
         require(success, "[Lottery]: Call to Liquidity failed.");
         emit SuccessfulPayment(success);
