@@ -24,7 +24,7 @@ const Navbar = () => {
                     auth={{
                         loginOptional: false,
                     }}
-                />;
+                />
             </div>
         </nav>
     );
