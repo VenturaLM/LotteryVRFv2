@@ -118,8 +118,8 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
     error OnlyCallableIfPaused();
     error MintPaused();
 
-    // FIXME: Set a proper `_liquidity`, if applicable.
-    address private _liquidity = 0xfaeAD884FDaDA5B42E8fdd61EdF6286E7FC61b0A;
+    // FIXME: Set a proper `_royalty`, if applicable.
+    address public _royalty;
 
     // Array to store (in order) the players.
     address[] private _players;
@@ -135,6 +135,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
             0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed
         );
         LINKTOKEN = LinkTokenInterface(LINK_TOKEN_CONTRACT);
+        _royalty = msg.sender;
     }
 
     // Events.
@@ -424,7 +425,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
      *  - The winner must hold at least 1 share.
      *  - Call functions must succeed.
      *
-     * Emits {Response} events.
+     * Emits {SetWinnerAddress} events.
      */
     function computeWinner(
         string memory salt
@@ -479,7 +480,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
         _sendJackpotPercentageTo(winnerAddress, 95);
 
         // Save the rest of the balance in a Liquidity address.
-        _sendJackpotPercentageTo(_liquidity, 100);
+        _sendJackpotPercentageTo(_royalty, 100);
 
         // Update and reset lottery values.
         _lotteryHistory[lotteryId] = winnerAddress;
@@ -507,6 +508,14 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
      */
     function getLINKBalance() public view onlyOwner returns (uint256) {
         return LINKTOKEN.balanceOf(address(this));
+    }
+
+    /**
+     * @dev Update `_royalty` address.
+     * @param royaltyAddress address New royalty address.
+     */
+    function updateRoyaltyAddress(address royaltyAddress) public onlyOwner {
+        _royalty = royaltyAddress;
     }
 
     // Internal.
@@ -538,6 +547,8 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
      * @dev Function that sends a % of the lottery jackpot to an address.
      * @param to address Value receiver.
      * @param percentage uint256 Percentage of the jackpot to be sent.
+     *
+     * Emits {Response} events.
      */
     function _sendJackpotPercentageTo(address to, uint256 percentage) private {
         (bool success, bytes memory data) = to.call{
