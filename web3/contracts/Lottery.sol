@@ -142,7 +142,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
     event RequestSent(uint256 requestId, uint32 numWords);
     event RequestFulfilled(uint256 requestId, uint256[] randomWords);
     event SetWinnerAddress(address);
-    event SuccessfulPayment(bool);
+    event Response(bool, bytes);
 
     // Modifiers.
     // -----------------------
@@ -424,7 +424,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
      *  - The winner must hold at least 1 share.
      *  - Call functions must succeed.
      *
-     * Emits {SuccessfulPayment} events.
+     * Emits {Response} events.
      */
     function computeWinner(
         string memory salt
@@ -474,19 +474,12 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
             "[Lottery]: The property of the winner ticket does not match with the winner address."
         );
 
-        // Send the prize to the winner, e.g., 90% of the total amount.
         // FIXME: Check this percentages in production.
-        (bool success, ) = winnerAddress.call{
-            value: (address(this).balance * 90) / 100
-        }("");
-        require(success, "[Lottery]: Call to Winner failed.");
-        emit SuccessfulPayment(success);
+        // Send the jackpot to the winner, e.g., 95% of the total amount.
+        _sendJackpotPercentageTo(winnerAddress, 95);
 
         // Save the rest of the balance in a Liquidity address.
-        // FIXME: Only use this if `_liquidity` variable is declared.
-        (success, ) = _liquidity.call{value: address(this).balance}("");
-        require(success, "[Lottery]: Call to Liquidity failed.");
-        emit SuccessfulPayment(success);
+        _sendJackpotPercentageTo(_liquidity, 100);
 
         // Update and reset lottery values.
         _lotteryHistory[lotteryId] = winnerAddress;
@@ -537,5 +530,20 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
         s_requests[requestId]._randomWords = randomWords;
 
         emit RequestFulfilled(requestId, randomWords);
+    }
+
+    // Private.
+    // -----------------------
+    /**
+     * @dev Function that sends a % of the lottery jackpot to an address.
+     * @param to address Value receiver.
+     * @param percentage uint256 Percentage of the jackpot to be sent.
+     */
+    function _sendJackpotPercentageTo(address to, uint256 percentage) private {
+        (bool success, bytes memory data) = to.call{
+            value: (address(this).balance * percentage) / 100
+        }("");
+
+        emit Response(success, data);
     }
 }
