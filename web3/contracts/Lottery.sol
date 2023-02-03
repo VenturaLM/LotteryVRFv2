@@ -118,8 +118,10 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
     error OnlyCallableIfPaused();
     error MintPaused();
 
-    // FIXME: Set a proper `_royalty`, if applicable.
+    // Royalty data.
     address public _royalty;
+    // FIXME: Set a `_royaltyPercentage`, if applicable; if it is not, set it to 0.
+    uint256 _royaltyPercentage = 5;
 
     // Array to store (in order) the players.
     address[] private _players;
@@ -475,12 +477,13 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
             "[Lottery]: The property of the winner ticket does not match with the winner address."
         );
 
-        // FIXME: Check this percentages in production.
-        // Send the jackpot to the winner, e.g., 95% of the total amount.
-        _sendJackpotPercentageTo(winnerAddress, 95);
+        // Royalty.
+        uint256 royaltyPercentage = _royaltyPercentage;
+        if (royaltyPercentage > 0)
+            _sendJackpotPercentageTo(_royalty, royaltyPercentage);
 
-        // Save the rest of the balance in a Liquidity address.
-        _sendJackpotPercentageTo(_royalty, 100);
+        // Send the jackpot to the winner. Jackpot = 100 - `_royaltyPercentage`.
+        _sendJackpotPercentageTo(winnerAddress, 100);
 
         // Update and reset lottery values.
         _lotteryHistory[lotteryId] = winnerAddress;
