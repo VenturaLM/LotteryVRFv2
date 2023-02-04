@@ -15,8 +15,13 @@ const Welcome = () => {
     const [amount, setAmount] = useState("");
     const { contract } = useContract(contractAddress);
     const currentAddress = useAddress();
+
     const [isPausedLoading, setIsPausedLoading] = useState(false);
     const [isPaused, setIsPaused] = useState("");
+
+    const [isLotteryIdLoading, setIsLotteryIdLoading] = useState(false);
+    const [lotteryId, setLotteryId] = useState("");
+
 
     const getIsPaused = async () => {
         const paused = await contract.call("_isPaused");
@@ -30,8 +35,23 @@ const Welcome = () => {
         setIsPausedLoading(false);
     }
 
+    const getLotteryId = async () => {
+        const id = await contract.call("_lotteryId")
+        return id.toNumber();
+    }
+
+    const fetchLotteryId = async () => {
+        setIsLotteryIdLoading(true);
+        const id = await getLotteryId();
+        setLotteryId(id);
+        setIsLotteryIdLoading(false);
+    }
+
     useEffect(() => {
-        if (contract) fetchIsPaused();
+        if (contract) {
+            fetchIsPaused();
+            fetchLotteryId();
+        }
     }, [contractAddress, contract]);
 
     const call = async () => {
@@ -52,9 +72,14 @@ const Welcome = () => {
             {/* <div className="flex mf:flex-row flex-col items-start justify-between md:p-20 py-12 px-4 space-y-10"> */}
             <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6">
                 <div className="flex flex-1 justify-start items-center flex-col mf:mr-10">
-                    <h1 className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
-                        Bienvenido a la <br />lotería
-                    </h1>
+                    <div className="sm_text-5xl py-1 uppercase font-roboto bg-gradient-to-r bg-clip-text text-3xl text-transparent from-cyan-300 to-indigo-500 font-light">
+                        {isLotteryIdLoading && (
+                            <h1>Cargando...</h1>
+                        )}
+                        {!isLotteryIdLoading && (
+                            <h1>Bienvenido a la <br />lotería número {lotteryId}</h1>
+                        )}
+                    </div>
                     <p className="text-left mt-5 text-white font-inter text-xs tracking-widest text-slateus-200 font-light md:w-7/12 w-11/12">
                         En esta lotería podrás competir con miembros de otras comunidades por el bote en juego.
                     </p>
